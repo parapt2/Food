@@ -114,7 +114,7 @@ window.addEventListener('DOMContentLoaded', () => {
         // alternative variant with toggle
         // modal.classList.toggle('show');
         document.body.style.overflow = 'hidden';
-        clearInterval(modalTimerId);
+        // clearInterval(modalTimerId); 
     }
 
     modalTrigger.forEach(btn => {
@@ -145,6 +145,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     // const modalTimerId = setTimeout(openModal, 5000);
+    // !!! uncomment line 117
 
     function showModalByScroll() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1) {
@@ -177,13 +178,13 @@ window.addEventListener('DOMContentLoaded', () => {
         render() {
             const element = document.createElement('div');
 
-            if(this.classes.length === 0) {
+            if (this.classes.length === 0) {
                 this.classes = ['menu__item'];
                 element.classList.add(this.classes);
             } else {
                 this.classes.forEach(className => element.classList.add(className));
             }
-            
+
             element.innerHTML = `
                 <img src=${this.src} alt=${this.alt}>
                 <h3 class="menu__item-subtitle">${this.title}</h3>
@@ -228,4 +229,56 @@ window.addEventListener('DOMContentLoaded', () => {
         ".menu .container",
         'menu__item'
     ).render();
+
+    //Forms
+    const forms = document.querySelectorAll('form');
+
+    const message = {
+        loading: "Loading",
+        success: "Thank you! We'll contactact you as soon as possible.",
+        failure: "Something went wrong..."
+    };
+
+    forms.forEach(item => {
+        postData(item);
+    });
+
+    function postData(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            let statusMessage = document.createElement('div');
+            statusMessage.classList.add('status');
+            statusMessage.textContent = message.loading;
+            form.appendChild(statusMessage);
+
+            const request = new XMLHttpRequest();
+            request.open('POST', 'server.php');
+
+            request.setRequestHeader('Content-type', 'application/json');
+            const formData = new FormData(form);
+
+            const object = {};
+            formData.forEach(function (value, key) {
+                object[key] = value;
+            });
+
+            const json = JSON.stringify(object);
+
+            request.send(json);
+
+            request.addEventListener('load', () => {
+                if (request.status === 200) {
+                    console.log(request.response);
+                    statusMessage.textContent = message.success;
+                    form.reset();
+                    setTimeout(() => {
+                        statusMessage.remove();
+                    }, 2000);
+                } else {
+                    statusMessage.textContent = message.failure;
+                }
+            });
+        });
+    }
 });

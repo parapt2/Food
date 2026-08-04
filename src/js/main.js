@@ -400,11 +400,15 @@ window.addEventListener('DOMContentLoaded', () => {
         dots.push(dot);
     }
 
+    function deleteNotDogits(str) {
+        return +str.replace(/\D/g, '');
+    }
+
     next.addEventListener('click', () => {
-        if (offset == +width.slice(0, width.length - 2) * (slides.length - 1)) {
+        if (offset == deleteNotDogits(width) * (slides.length - 1)) {
             offset = 0;
         } else {
-            offset += +width.slice(0, width.length - 2);
+            offset += deleteNotDogits(width);
         }
 
         slidesField.style.transform = `translateX(-${offset}px)`;
@@ -415,23 +419,16 @@ window.addEventListener('DOMContentLoaded', () => {
             slideIndex++;
         }
 
-        // if (slides.length < 10) {
-        //     current.textContent = `0${slideIndex}`;
-        // } else {
-        //     current.textContent = slideIndex;
-        // }
         prependZeroToSlideNumber(slides, slideIndex);
 
-        // dots.forEach(dot => dot.style.opacity = '.5');
-        // dots[slideIndex - 1].style.opacity = 1;
         changeDotOpacity(dots, slideIndex - 1);
     });
 
     prev.addEventListener('click', () => {
         if (offset == 0) {
-            offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+            offset = deleteNotDogits(width) * (slides.length - 1);
         } else {
-            offset -= +width.slice(0, width.length - 2);
+            offset -= deleteNotDogits(width);
         }
 
         slidesField.style.transform = `translateX(-${offset}px)`;
@@ -442,15 +439,8 @@ window.addEventListener('DOMContentLoaded', () => {
             slideIndex--;
         }
 
-        // if (slides.length < 10) {
-        //     current.textContent = `0${slideIndex}`;
-        // } else {
-        //     current.textContent = slideIndex;
-        // }
         prependZeroToSlideNumber(slides, slideIndex);
 
-        // dots.forEach(dot => dot.style.opacity = '.5');
-        // dots[slideIndex - 1].style.opacity = 1;
         changeDotOpacity(dots, slideIndex - 1);
     });
 
@@ -459,30 +449,23 @@ window.addEventListener('DOMContentLoaded', () => {
             const slideTo = e.target.getAttribute('data-slide-to');
 
             slideIndex = slideTo;
-            offset = +width.slice(0, width.length - 2) * (slideTo - 1);
+            offset = deleteNotDogits(width) * (slideTo - 1);
 
             slidesField.style.transform = `translateX(-${offset}px)`;
 
-            // if (slides.length < 10) {
-            //     current.textContent = `0${slideIndex}`;
-            // } else {
-            //     current.textContent = slideIndex;
-            // }
             prependZeroToSlideNumber(slides, slideIndex);
 
-            // dots.forEach(dot => dot.style.opacity = '.5');
-            // dots[slideIndex - 1].style.opacity = 1;
             changeDotOpacity(dots, slideIndex - 1);
         });
     });
 
     // helper functions
-    function changeDotOpacity (arr, i) {
+    function changeDotOpacity(arr, i) {
         arr.forEach(item => item.style.opacity = '.5');
         arr[i].style.opacity = 1;
     }
 
-    function prependZeroToSlideNumber (arr, i) {
+    function prependZeroToSlideNumber(arr, i) {
         if (arr.length < 10) {
             current.textContent = `0${i}`;
         } else {
